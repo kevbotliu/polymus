@@ -228,21 +228,30 @@ const hexominos =      [
                         ]
                     ];
 
+let boardWidth = 300;
+let boardHeight = 600;
+let blockSize = 30;
 
-let boardWidth = 10;
-let boardHeight = 20;
-const blockSize = 40;
-
-const easy = 1000;
-const medium = 500;
-const hard = 300;
+const EASY = 700;
+const MEDIUM = 500;
+const HARD = 300;
 xy = 0;
+
+let background = new Image();
+background.src = "./assets/bg.png";
 
 window.onload = function() {
     c = document.getElementById("canvas");
     cc = c.getContext("2d");
-    setInterval(update, easy);
-    generatePiece();
+
+    boardHeight = document.documentElement.clientHeight * 0.8;
+    boardWidth = boardHeight / 2;
+    blockSize = boardHeight / 20;
+    c.height = boardHeight;
+    c.width = boardWidth;
+
+    cc.imageSmoothingEnabled = false;
+    setInterval(update, EASY);  
 
     window.onkeydown = function(e) {
         let code = e.keyCode ? e.keyCode : e.which;
@@ -261,10 +270,15 @@ window.onload = function() {
     };
 }
 function update() {
-    cc.fillStyle = "black";
-    cc.fillRect(0,0,c.width, c.height);
+    cc.drawImage(background, 0, 0, boardWidth, boardHeight); 
 
+    let landed = false;
     cc.fillStyle = "white";
+
+
+
+
+
     cc.fillRect(0, xy, blockSize, blockSize);
     xy+=blockSize;
 
@@ -272,6 +286,7 @@ function update() {
 
 function generatePiece() {
     polyminoList = [];
+
     if(document.getElementById("cb1").checked) polyminoList.push(monominos);
     else if(polyminoList.includes(monominos)) polyminoList.splice(polyminoList.indexOf(monominos),1);
     if(document.getElementById("cb2").checked) polyminoList.push(dominos);
@@ -285,5 +300,9 @@ function generatePiece() {
     if(document.getElementById("cb6").checked) polyminoList.push(hexominos);
     else if(polyminoList.includes(hexominos)) polyminoList.splice(polyminoList.indexOf(hexominos),1);
 
-    return polyminoList;
+    return polyminoList[Math.floor(Math.random()*polyminoList.length)][Math.floor(Math.random()*this.length)];
+}
+
+window.onresize = function() {
+    location.reload(); 
 }

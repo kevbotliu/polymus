@@ -3,15 +3,32 @@ html {
 }
 
 body {
+    position: fixed;
     margin: 0;
     width: 100vw;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
 }
 
 #main {
-    width: 600px;
-    height: 200px;
-    background: red;
+    position: fixed;
+    width: 800px;
+    height: 100vh;
+    background: white;
+}
+#canvas {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+    border-radius: 2px;
 }
 
 label {
