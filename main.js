@@ -237,7 +237,13 @@ const MEDIUM = 500;
 const HARD = 300;
 
 let startVisible = true;
-let xy = 0;
+let yC = 0;
+let xC = 0;
+let pieceQueue = [];
+let piece = null;
+let placed = true;
+
+let interval = null;
 
 let background = new Image();
 background.src = "./assets/bg.png";
@@ -259,26 +265,39 @@ window.onload = function() {
 
 
     document.getElementById("start-button").addEventListener('click', function() {
-        document.getElementById("start-menu").style.display = "none";
         startVisible = false;
-        console.log("doot");
-        setInterval(update, EASY);
+        document.getElementById("start-menu").style.display = "none";
+
+        
+        
+
+
+        interval = setInterval(update, EASY);
     }); 
 
 
     window.onkeydown = function(e) {
         let code = e.keyCode ? e.keyCode : e.which;
-        if (code === 37) { //down key
-            alert('left');
+        if (code === 37) { //left key
+            xC -= blockSize;
+            yC -= blockSize;
+            update();
         }
         else if (code === 38) { //up key
             alert('up');
         } 
         else if (code === 39) { //right key
-            alert('right');
+            xC += blockSize;
+            yC -= blockSize;
+            update();
         } 
         else if (code === 40) { //down key
             alert('down');
+        }
+        else if (code == 27) {
+            document.getElementById("start-menu").style.display = "flex";
+            clearInterval(interval);
+            startVisible = true;
         }
     };
     
@@ -287,15 +306,30 @@ function update() {
     cc.drawImage(background, 0, 0, boardWidth, boardHeight); 
     cc.fillStyle = "white";
 
-    let landed = false;
-    let pieceQueue = [];
-    console.log(generatePiece());
+    while(pieceQueue.length < 3) {
+        pieceQueue.push(generatePiece());
+    }
+    if(placed) {
+        piece = pieceQueue.shift();
+        placed = false;
+    }
+    
 
+    drawPiece(piece, xC, yC);
 
+    yC+=blockSize;
 
-    cc.fillRect(0, xy, blockSize, blockSize);
-    xy+=blockSize;
+}
 
+function drawPiece(arr, x, y) {
+    for(let i=0; i<arr.length; i++) {
+        for(let j=0; j<arr[i].length; j++) {
+            if(arr[i][j] == 1) {
+                cc.fillRect(x + j*blockSize, y + i*blockSize, blockSize, blockSize);
+            }
+        }
+    }
+    console.log(piece);
 }
 
 function generatePiece() {
@@ -314,8 +348,10 @@ function generatePiece() {
     if(document.getElementById("cb6").checked) polyminoList.push(hexominos);
     else if(polyminoList.includes(hexominos)) polyminoList.splice(polyminoList.indexOf(hexominos),1);
 
-    return polyminoList[Math.floor(Math.random()*polyminoList.length)][Math.floor(Math.random()*this.length)];
-}
+    let polyminoCat = polyminoList[Math.floor(Math.random()*polyminoList.length)];
+    let polyminoPiece = polyminoCat[Math.floor(Math.random()*polyminoCat.length)];
+    return polyminoPiece;
+}   
 
 window.onresize = function() {
     location.reload(); 
