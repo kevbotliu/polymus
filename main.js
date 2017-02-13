@@ -235,7 +235,9 @@ let blockSize = 30;
 const EASY = 700;
 const MEDIUM = 500;
 const HARD = 300;
-xy = 0;
+
+let startVisible = true;
+let xy = 0;
 
 let background = new Image();
 background.src = "./assets/bg.png";
@@ -250,8 +252,19 @@ window.onload = function() {
     c.height = boardHeight;
     c.width = boardWidth;
 
+    document.getElementById("start-menu").style.width = boardWidth + "px";
+    document.getElementById("start-menu").style.height = boardHeight + "px";
+
     cc.imageSmoothingEnabled = false;
-    setInterval(update, EASY);  
+
+
+    document.getElementById("start-button").addEventListener('click', function() {
+        document.getElementById("start-menu").style.display = "none";
+        startVisible = false;
+        console.log("doot");
+        setInterval(update, EASY);
+    }); 
+
 
     window.onkeydown = function(e) {
         let code = e.keyCode ? e.keyCode : e.which;
@@ -268,14 +281,15 @@ window.onload = function() {
             alert('down');
         }
     };
+    
 }
 function update() {
     cc.drawImage(background, 0, 0, boardWidth, boardHeight); 
-
-    let landed = false;
     cc.fillStyle = "white";
 
-
+    let landed = false;
+    let pieceQueue = [];
+    console.log(generatePiece());
 
 
 
