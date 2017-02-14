@@ -53,10 +53,11 @@ body {
     overflow: hidden;
 }
 #bg-image {
-    transform: scale(1.05);
-    height: 100%;
-    width: 100%;
-    filter: blur(5px);
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: -20px;
+    margin-bottom: -20px;
+    filter: blur(10px);
 }
 #start-button {
     font-family: 'Squada One', cursive;

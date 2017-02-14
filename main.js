@@ -213,6 +213,9 @@ let yC = 0, xC = 0;
 let pieceQueue = [];
 let piece = null;
 let placed = true;
+let score = 0;
+
+let leftBound, rightBound, topBound, bottomBound;
 
 let interval = null;
 
@@ -230,7 +233,7 @@ window.onload = function() {
         document.getElementById("start-menu").style.filter = "blur(20px)";
         document.getElementById("start-menu").style.opacity = "0";
         //document.getElementById("start-menu").style.display = "none";
-        interval = setInterval(update, EASY);
+        interval = setInterval(update, HARD);
     }); 
 
 
@@ -256,7 +259,7 @@ window.onload = function() {
             }
         } 
         else if (code === 40) { //down key
-            yC++;
+            yC = board.length - bottomBound - 1;
             update();
         }
         else if (code == 27) {
@@ -280,6 +283,9 @@ function init() {
     blockSize = boardHeight / 20;
     c.height = boardHeight;
     c.width = boardWidth;
+
+    document.getElementById("bg-image").style.height = (boardHeight + 40) + "px";
+    document.getElementById("bg-image").style.width = (boardWidth + 40) + "px";
 
     document.getElementById("start-menu").style.width = boardWidth + "px";
     document.getElementById("start-menu").style.height = boardHeight + "px";
@@ -305,13 +311,29 @@ function update() {
     if(placed) {
         piece = pieceQueue.shift();
         placed = false;
+
+        for(let i=0; i<board.length; i++) {
+            let count = 0;
+            for(let j=0; j<board[i].length; j++) {
+                if(board[i][j] == 1) count++;
+                if(count == board[i].length) {
+                    let list = [];
+                    for(let k=0; k<(boardWidth/blockSize); k++) {
+                        list.push(0);
+                    }
+                    board.splice(i, 1);
+                    board.unshift(list);
+                    score++;
+                }
+            }
+        }    
     }
 
     
 
-    drawBoardLayer(piece, xC, yC);
-    draw();
     
+    draw();
+    drawBoardLayer(piece, xC, yC);
 
     reset(boardLayer);
     yC++;
@@ -331,9 +353,8 @@ function draw() {
 function drawBoardLayer(arr, x, y) {
     reset(boardLayer);
 
-
     //Collision handling
-    let leftBound = null, rightBound = null, topBound = null, bottomBound = null;
+    leftBound = null, rightBound = null, topBound = null, bottomBound = null;
 
     for(let i=0; i<arr.length; i++) {
         for(let j=0; j<arr[i].length; j++) {
@@ -347,16 +368,24 @@ function drawBoardLayer(arr, x, y) {
     }
     if((x + leftBound) < 0 || (x + rightBound) >= boardLayer[0].length) return false;
 
+
     //Piece rendering
     for(let i=0; i<arr.length; i++) {
         for(let j=0; j<arr[i].length; j++) {
             if(arr[i][j] == 1) {
-                boardLayer[i+y][j+x] = 1;
+                if(board[i+y][j+x] == 1) {
+                    placed = true;
+                    drawBoardLayer(arr, x, y-1);
+                    xC = 0;
+                    yC = 0;
+                    return true;
+                }
+                else boardLayer[i+y][j+x] = 1;
             }
         }
     }
 
-    if(y + bottomBound == boardLayer.length - 1) {
+    if(y + bottomBound == boardLayer.length - 1 || placed) {
         for(let i=0; i<boardLayer.length; i++) {
             for(let j=0; j<boardLayer[i].length; j++) {
                 if(boardLayer[i][j] == 1) {
