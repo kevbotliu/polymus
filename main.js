@@ -224,7 +224,12 @@ window.onload = function() {
 
     document.getElementById("start-button").addEventListener('click', function() {
         startVisible = false;
-        document.getElementById("start-menu").style.display = "none";
+        document.getElementById("start-button").style.background = "grey";
+        document.getElementById("start-button").style.boxShadow = "none";
+        document.getElementById("canvas").style.boxShadow = "0 0 50px rgba(0, 0, 0, 0.5)";
+        document.getElementById("start-menu").style.filter = "blur(20px)";
+        document.getElementById("start-menu").style.opacity = "0";
+        //document.getElementById("start-menu").style.display = "none";
         interval = setInterval(update, EASY);
     }); 
 
@@ -233,28 +238,31 @@ window.onload = function() {
         let code = e.keyCode ? e.keyCode : e.which;
         if (code === 37) { //left key
             if(drawBoardLayer(piece, xC - 1, yC)) {
-                xC -= 1;
-                yC -= 1;
+                xC--;
+                yC--;
                 update();
             }
         }
         else if (code === 38) { //up key
             piece = rotate(piece);
-            yC -= 1;
+            yC--;
             update();
         } 
         else if (code === 39) { //right key
             if(drawBoardLayer(piece, xC + 1, yC)) {
-                xC += 1;
-                yC -= 1;
+                xC++;
+                yC--;
                 update();
             }
         } 
         else if (code === 40) { //down key
-            alert('down');
+            yC++;
+            update();
         }
         else if (code == 27) {
-            document.getElementById("start-menu").style.display = "flex";
+            //document.getElementById("start-menu").style.display = "flex";
+            document.getElementById("start-menu").style.opacity = "1";
+            document.getElementById("start-menu").style.filter = "blur(5px)";
             clearInterval(interval);
             startVisible = true;
         }
@@ -306,7 +314,7 @@ function update() {
     
 
     reset(boardLayer);
-    yC += 1;
+    yC++;
 
 
 }
@@ -314,7 +322,7 @@ function draw() {
     for(let i=0; i<board.length; i++) {
         for(let j=0; j<board[i].length; j++) {
             if(board[i][j] == 1) {
-                cc.fillRect(j*blockSize, i*blockSize, blockSize, blockSize, 3);
+                roundRect(cc, j*blockSize + 2, i*blockSize + 2, blockSize - 4, blockSize - 4, 3, "white", true)
             }
         }
     }
@@ -339,9 +347,6 @@ function drawBoardLayer(arr, x, y) {
     }
     if((x + leftBound) < 0 || (x + rightBound) >= boardLayer[0].length) return false;
 
-
-
-
     //Piece rendering
     for(let i=0; i<arr.length; i++) {
         for(let j=0; j<arr[i].length; j++) {
@@ -350,6 +355,21 @@ function drawBoardLayer(arr, x, y) {
             }
         }
     }
+
+    if(y + bottomBound == boardLayer.length - 1) {
+        for(let i=0; i<boardLayer.length; i++) {
+            for(let j=0; j<boardLayer[i].length; j++) {
+                if(boardLayer[i][j] == 1) {
+                    board[i][j] = boardLayer[i][j];
+                }
+            }
+        }
+        placed = true;
+        xC = 0;
+        yC = 0;
+        return true;
+    }
+
     for(let i=0; i<boardLayer.length; i++) {
         for(let j=0; j<boardLayer[i].length; j++) {
             if(boardLayer[i][j] == 1) {

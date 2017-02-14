@@ -1,5 +1,8 @@
 html {
     margin: 0;
+    image-rendering: -moz-crisp-edges;          /* Firefox                        */                      */
+    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
+    image-rendering: pixelated; /* Chrome */
 }
 
 body {
@@ -7,6 +10,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: white;
+    font-family: 'Squada One', cursive;
 }
 
 #main {
@@ -30,29 +34,48 @@ body {
     left: 0;
     bottom: 0;
     right: 0;
-    box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
     border-radius: 2px;
     z-index: 2;
-
-    image-rendering: -moz-crisp-edges;          /* Firefox                        */                      */
-    image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-    image-rendering: pixelated; /* Chrome */
+    transition: box-shadow 0.75s;
 }
 #start-menu {
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     margin: auto;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    background: red;
+    background: transparent;
     z-index: 3;
     border-radius: 2px;
+    transition: all 0.75s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+#bg-image {
+    transform: scale(1.05);
+    height: 100%;
+    width: 100%;
+    filter: blur(5px);
 }
 #start-button {
+    font-family: 'Squada One', cursive;
+    text-transform: uppercase;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    color: rgba(0, 0, 0, 0.8);
+    border: none;
+    background: white;
+    outline: none;
+    border-radius: 2px;
+    font-size: 1.5em;
+    width: 100px;
+    height: 50px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 label {
