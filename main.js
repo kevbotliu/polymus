@@ -27,40 +27,33 @@ const tetrominos =    [
                             [0, 0, 0, 0]
                         ],
                         [
-                            [0, 0, 0, 0], 
-                            [0, 1, 1, 0],
-                            [0, 1, 1, 0],
-                            [0, 0, 0, 0]
+                            [1, 1],
+                            [1, 1]
                         ],
                         [
-                            [0, 1, 0, 0], 
-                            [0, 1, 0, 0],
-                            [0, 1, 1, 0],
-                            [0, 0, 0, 0]
+                            [1, 0, 0],
+                            [1, 1, 1],
+                            [0, 0, 0]
                         ],
                         [
-                            [0, 1, 0, 0], 
-                            [0, 1, 0, 0],
-                            [1, 1, 0, 0],
-                            [0, 0, 0, 0]
+                            [0, 0, 1], 
+                            [1, 1, 1],
+                            [0, 0, 0]
                         ],
                         [
-                            [0, 1, 0, 0], 
-                            [0, 1, 1, 0],
-                            [0, 0, 1, 0],
-                            [0, 0, 0, 0]
+                            [0, 1, 1], 
+                            [1, 1, 0],
+                            [0, 0, 0]
                         ],
                         [
-                            [0, 1, 0, 0], 
-                            [1, 1, 0, 0],
-                            [1, 0, 0, 0],
-                            [0, 0, 0, 0]
+                            [1, 1, 0], 
+                            [0, 1, 1],
+                            [0, 0, 0]
                         ],
                         [
-                            [0, 0, 0, 0], 
-                            [0, 1, 0, 0],
-                            [1, 1, 1, 0],
-                            [0, 0, 0, 0]
+                            [0, 1, 0], 
+                            [1, 1, 1],
+                            [0, 0, 0]
                         ]
                     ];
 
@@ -73,123 +66,101 @@ const pentominos =    [
                             [0, 0, 0, 0, 0]
                         ],
                         [
-                            [0, 0, 0, 0, 0], 
-                            [0, 0, 1, 0, 0],
-                            [0, 0, 1, 1, 0],
-                            [0, 0, 1, 1, 0],
-                            [0, 0, 0, 0, 0]
+                            [1, 1, 0],
+                            [1, 1, 0],
+                            [0, 1, 0]
+                        ],
+                        [
+                            [1, 1, 0],
+                            [1, 1, 0],
+                            [1, 0, 0]
+                        ],
+                        [
+                            [0, 0, 0, 0], 
+                            [1, 0, 0, 0],
+                            [1, 1, 1, 1],
+                            [0, 0, 0, 0]
+                        ],
+                        [
+                            [0, 0, 0, 0], 
+                            [1, 1, 1, 1],
+                            [1, 0, 0, 0],
+                            [0, 0, 0, 0]
+                        ],
+                        [
+                            [1, 0, 0], 
+                            [1, 1, 1],
+                            [0, 1, 0]
+                        ],
+                        [
+                            [0, 0, 1], 
+                            [1, 1, 1],
+                            [0, 1, 0]
                         ],
                         [
                             [0, 0, 0, 0, 0], 
-                            [0, 0, 0, 1, 0],
-                            [0, 0, 1, 1, 0],
-                            [0, 0, 1, 1, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [1, 1, 1, 1, 0],
-                            [0, 0, 0, 1, 0],
                             [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 1, 0], 
-                            [1, 1, 1, 1, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 1, 0, 0, 0], 
                             [1, 1, 1, 0, 0],
-                            [0, 0, 1, 0, 0],
+                            [0, 0, 1, 1, 0],
+                            [0, 0, 0, 0, 0]
+                        ],
+                        [
+                            [0, 0, 0, 0, 0], 
                             [0, 0, 0, 0, 0],
+                            [0, 0, 1, 1, 0],
+                            [1, 1, 1, 0, 0],
                             [0, 0, 0, 0, 0]
                         ],
                         [
                             [0, 0, 1, 0, 0], 
-                            [1, 1, 1, 0, 0],
-                            [0, 1, 0, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [1, 1, 1, 0, 0],
-                            [0, 0, 1, 1, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 1, 1, 0], 
-                            [1, 1, 1, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 1, 0, 0], 
-                            [1, 1, 1, 0, 0],
                             [0, 0, 1, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [1, 1, 1, 0, 0],
-                            [1, 0, 1, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [1, 1, 1, 0, 0],
-                            [0, 0, 1, 0, 0],
-                            [0, 0, 1, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [1, 1, 0, 0, 0],
-                            [0, 1, 1, 0, 0],
-                            [0, 0, 1, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [0, 1, 0, 0, 0],
-                            [1, 1, 1, 0, 0],
-                            [0, 1, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 0, 0, 0], 
-                            [1, 1, 1, 1, 0],
-                            [0, 0, 1, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 0, 1, 0, 0], 
-                            [1, 1, 1, 1, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0],
-                            [0, 0, 0, 0, 0]
-                        ],
-                        [
-                            [0, 1, 0, 0, 0], 
                             [0, 1, 1, 1, 0],
-                            [0, 0, 0, 1, 0],
                             [0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0]
                         ],
                         [
-                            [0, 0, 0, 1, 0], 
-                            [0, 1, 1, 1, 0],
-                            [0, 1, 0, 0, 0],
+                            [1, 0, 1],
+                            [1, 1, 1],
+                            [0, 0, 0]
+                        ],
+                        [
+                            [0, 0, 1],
+                            [0, 0, 1],
+                            [1, 1, 1]
+                        ],
+                        [
+                            [1, 0, 0],
+                            [1, 1, 0],
+                            [0, 1, 1]
+                        ],
+                        [ 
+                            [0, 1, 0],
+                            [1, 1, 1],
+                            [0, 1, 0]
+                        ],
+                        [
+                            [0, 0, 0, 0, 0], 
+                            [0, 0, 1, 0, 0],
+                            [0, 1, 1, 1, 1],
                             [0, 0, 0, 0, 0],
                             [0, 0, 0, 0, 0]
+                        ],
+                        [
+                            [0, 0, 0, 0, 0], 
+                            [0, 0, 1, 0, 0],
+                            [1, 1, 1, 1, 0],
+                            [0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0]
+                        ],
+                        [
+                            [1, 0, 0],
+                            [1, 1, 1],
+                            [0, 0, 1]
+                        ],
+                        [
+                            [0, 0, 1],
+                            [1, 1, 1],
+                            [1, 0, 0]
                         ]
                     ];
 //not done
@@ -243,6 +214,8 @@ let pieceQueue = [];
 let piece = null;
 let placed = true;
 
+let leftBound, rightBound, topBound, bottomBound;
+
 let interval = null;
 
 let background = new Image();
@@ -261,9 +234,11 @@ window.onload = function() {
     window.onkeydown = function(e) {
         let code = e.keyCode ? e.keyCode : e.which;
         if (code === 37) { //left key
-            xC -= 1;
-            yC -= 1;
-            update();
+            if(drawBoardLayer(piece, xC - 1, yC)) {
+                xC -= 1;
+                yC -= 1;
+                update();
+            }
         }
         else if (code === 38) { //up key
             piece = rotate(piece);
@@ -271,9 +246,11 @@ window.onload = function() {
             update();
         } 
         else if (code === 39) { //right key
-            xC += 1;
-            yC -= 1;
-            update();
+            if(drawBoardLayer(piece, xC + 1, yC)) {
+                xC += 1;
+                yC -= 1;
+                update();
+            }
         } 
         else if (code === 40) { //down key
             alert('down');
@@ -290,6 +267,7 @@ window.onload = function() {
 function init() {
     c = document.getElementById("canvas");
     cc = c.getContext("2d");
+
 
     boardHeight = document.documentElement.clientHeight * 0.8;
     boardWidth = boardHeight / 2;
@@ -322,10 +300,14 @@ function update() {
         piece = pieceQueue.shift();
         placed = false;
     }
-    
-    draw();
-    drawPiece(piece, xC, yC);
 
+    
+
+    drawBoardLayer(piece, xC, yC);
+    draw();
+    
+
+    reset(boardLayer);
     yC += 1;
 
 
@@ -334,21 +316,35 @@ function draw() {
     for(let i=0; i<board.length; i++) {
         for(let j=0; j<board[i].length; j++) {
             if(board[i][j] == 1) {
-                cc.fillRect(j*blockSize, i*blockSize, blockSize, blockSize);
+                cc.fillRect(j*blockSize, i*blockSize, blockSize, blockSize, 3);
             }
         }
     }
 }
 
-function drawPiece(arr, x, y) {
-    for(let i=0; i<(boardHeight/blockSize); i++) {
-        for(let j=0; j<(boardWidth/blockSize); j++) {
-            boardLayer[i][j] = 0;
-        }
-    }
+function drawBoardLayer(arr, x, y) {
+    reset(boardLayer);
+
+    leftBound = 100, rightBound = -100, topBound = 100, bottomBound = -100;
+
     for(let i=0; i<arr.length; i++) {
         for(let j=0; j<arr[i].length; j++) {
-            if(arr[i][j] == 1) boardLayer[i + y][j + x] = 1;
+            if(arr[i][j] == 1) {
+                if(leftBound == null || j < leftBound) leftBound = j;
+                if(rightBound == null || j > rightBound) rightBound = j;
+                if(topBound == null || i < topBound) topBound = i;
+                if(bottomBound == null || i > bottomBound) bottomBound = i;
+            }
+        }
+    }
+
+    if((x + leftBound) < 0 || (x + rightBound) >= boardLayer[0].length) return false;
+
+    for(let i=0; i<arr.length; i++) {
+        for(let j=0; j<arr[i].length; j++) {
+            if(arr[i][j] == 1) {
+                boardLayer[i+y][j+x] = 1;
+            }
         }
     }
     for(let i=0; i<boardLayer.length; i++) {
@@ -358,7 +354,9 @@ function drawPiece(arr, x, y) {
             }
         }
     }
+    
     console.log(x + ", " + y);
+    return true;
 }
 
 function generatePiece() {
@@ -410,6 +408,13 @@ function rotate(matrix) {
     return matrix;
 }
 
+function reset(arr) {
+    for(let i=0; i<arr.length; i++) {
+        for(let j=0; j<arr[i].length; j++) {
+            arr[i][j] = 0;
+        }
+    }
+}
 
 
 window.onresize = function() {
