@@ -214,8 +214,6 @@ let pieceQueue = [];
 let piece = null;
 let placed = true;
 
-let leftBound, rightBound, topBound, bottomBound;
-
 let interval = null;
 
 let background = new Image();
@@ -325,7 +323,9 @@ function draw() {
 function drawBoardLayer(arr, x, y) {
     reset(boardLayer);
 
-    leftBound = 100, rightBound = -100, topBound = 100, bottomBound = -100;
+
+    //Collision handling
+    let leftBound = null, rightBound = null, topBound = null, bottomBound = null;
 
     for(let i=0; i<arr.length; i++) {
         for(let j=0; j<arr[i].length; j++) {
@@ -337,9 +337,12 @@ function drawBoardLayer(arr, x, y) {
             }
         }
     }
-
     if((x + leftBound) < 0 || (x + rightBound) >= boardLayer[0].length) return false;
 
+
+
+
+    //Piece rendering
     for(let i=0; i<arr.length; i++) {
         for(let j=0; j<arr[i].length; j++) {
             if(arr[i][j] == 1) {
@@ -350,7 +353,8 @@ function drawBoardLayer(arr, x, y) {
     for(let i=0; i<boardLayer.length; i++) {
         for(let j=0; j<boardLayer[i].length; j++) {
             if(boardLayer[i][j] == 1) {
-                cc.fillRect(j*blockSize, i*blockSize, blockSize, blockSize);
+                roundRect(cc, (j*blockSize + 2), (i*blockSize + 2), (blockSize - 4), (blockSize - 4), 3, "white", true);
+                //cc.fillRect((j*blockSize + 3), (i*blockSize + 3), (blockSize - 3), (blockSize - 3));
             }
         }
     }
@@ -413,6 +417,32 @@ function reset(arr) {
         for(let j=0; j<arr[i].length; j++) {
             arr[i][j] = 0;
         }
+    }
+}
+
+function roundRect(ctx,x,y,width,height,radius,fill,stroke) {
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.beginPath();
+
+    // draw top and top right corner
+    ctx.moveTo(x+radius,y);
+    ctx.arcTo(x+width,y,x+width,y+radius,radius);
+
+    // draw right side and bottom right corner
+    ctx.arcTo(x+width,y+height,x+width-radius,y+height,radius); 
+
+    // draw bottom and bottom left corner
+    ctx.arcTo(x,y+height,x,y+height-radius,radius);
+
+    // draw left and top left corner
+    ctx.arcTo(x,y,x+radius,y,radius);
+
+    if(fill){
+    ctx.fill();
+    }
+    if(stroke){
+    ctx.stroke();
     }
 }
 
