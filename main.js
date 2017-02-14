@@ -231,14 +231,14 @@ const hexominos =      [
 let boardWidth = 300;
 let boardHeight = 600;
 let blockSize = 30;
+let board = [], boardLayer = [];
 
 const EASY = 700;
 const MEDIUM = 500;
 const HARD = 300;
 
 let startVisible = true;
-let yC = 0;
-let xC = 0;
+let yC = 0, xC = 0;
 let pieceQueue = [];
 let piece = null;
 let placed = true;
@@ -249,29 +249,11 @@ let background = new Image();
 background.src = "./assets/bg.png";
 
 window.onload = function() {
-    c = document.getElementById("canvas");
-    cc = c.getContext("2d");
-
-    boardHeight = document.documentElement.clientHeight * 0.8;
-    boardWidth = boardHeight / 2;
-    blockSize = boardHeight / 20;
-    c.height = boardHeight;
-    c.width = boardWidth;
-
-    document.getElementById("start-menu").style.width = boardWidth + "px";
-    document.getElementById("start-menu").style.height = boardHeight + "px";
-
-    cc.imageSmoothingEnabled = false;
-
+    init();
 
     document.getElementById("start-button").addEventListener('click', function() {
         startVisible = false;
         document.getElementById("start-menu").style.display = "none";
-
-        
-        
-
-
         interval = setInterval(update, EASY);
     }); 
 
@@ -279,16 +261,18 @@ window.onload = function() {
     window.onkeydown = function(e) {
         let code = e.keyCode ? e.keyCode : e.which;
         if (code === 37) { //left key
-            xC -= blockSize;
-            yC -= blockSize;
+            xC -= 1;
+            yC -= 1;
             update();
         }
         else if (code === 38) { //up key
-            alert('up');
+            piece = rotate(piece);
+            yC -= 1;
+            update();
         } 
         else if (code === 39) { //right key
-            xC += blockSize;
-            yC -= blockSize;
+            xC += 1;
+            yC -= 1;
             update();
         } 
         else if (code === 40) { //down key
@@ -302,6 +286,31 @@ window.onload = function() {
     };
     
 }
+
+function init() {
+    c = document.getElementById("canvas");
+    cc = c.getContext("2d");
+
+    boardHeight = document.documentElement.clientHeight * 0.8;
+    boardWidth = boardHeight / 2;
+    blockSize = boardHeight / 20;
+    c.height = boardHeight;
+    c.width = boardWidth;
+
+    document.getElementById("start-menu").style.width = boardWidth + "px";
+    document.getElementById("start-menu").style.height = boardHeight + "px";
+
+    for(let i=0; i<(boardHeight/blockSize); i++) {
+        board[i] = [];
+        boardLayer[i] = [];
+        for(let j=0; j<(boardWidth/blockSize); j++) {
+            board[i][j] = 0;
+            boardLayer[i][j] = 0;
+        }
+    }
+
+    cc.imageSmoothingEnabled = false;
+}
 function update() {
     cc.drawImage(background, 0, 0, boardWidth, boardHeight); 
     cc.fillStyle = "white";
@@ -314,22 +323,42 @@ function update() {
         placed = false;
     }
     
-
+    draw();
     drawPiece(piece, xC, yC);
 
-    yC+=blockSize;
+    yC += 1;
+
 
 }
-
-function drawPiece(arr, x, y) {
-    for(let i=0; i<arr.length; i++) {
-        for(let j=0; j<arr[i].length; j++) {
-            if(arr[i][j] == 1) {
-                cc.fillRect(x + j*blockSize, y + i*blockSize, blockSize, blockSize);
+function draw() {
+    for(let i=0; i<board.length; i++) {
+        for(let j=0; j<board[i].length; j++) {
+            if(board[i][j] == 1) {
+                cc.fillRect(j*blockSize, i*blockSize, blockSize, blockSize);
             }
         }
     }
-    console.log(piece);
+}
+
+function drawPiece(arr, x, y) {
+    for(let i=0; i<(boardHeight/blockSize); i++) {
+        for(let j=0; j<(boardWidth/blockSize); j++) {
+            boardLayer[i][j] = 0;
+        }
+    }
+    for(let i=0; i<arr.length; i++) {
+        for(let j=0; j<arr[i].length; j++) {
+            if(arr[i][j] == 1) boardLayer[i + y][j + x] = 1;
+        }
+    }
+    for(let i=0; i<boardLayer.length; i++) {
+        for(let j=0; j<boardLayer[i].length; j++) {
+            if(boardLayer[i][j] == 1) {
+                cc.fillRect(j*blockSize, i*blockSize, blockSize, blockSize);
+            }
+        }
+    }
+    console.log(x + ", " + y);
 }
 
 function generatePiece() {
@@ -352,6 +381,36 @@ function generatePiece() {
     let polyminoPiece = polyminoCat[Math.floor(Math.random()*polyminoCat.length)];
     return polyminoPiece;
 }   
+
+//Rotate Logic
+function reverseRows(matrix) {
+  for (i in matrix) {
+    matrix[i] = matrix[i].reverse();
+  }
+}
+function transpose(matrix) {
+    var n = matrix[0].length;
+    var temp;
+
+    for (var i = 0, j = 0; i < n; i++) {
+        j = i;
+        while (j < n) {
+            if (i !== j) {
+                temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+            j++;
+        }
+    }
+}
+function rotate(matrix) {
+    transpose(matrix);
+    reverseRows(matrix);
+    return matrix;
+}
+
+
 
 window.onresize = function() {
     location.reload(); 
