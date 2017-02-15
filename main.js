@@ -199,20 +199,22 @@ const hexominos =      [
                         ]
                     ];
 
-let blockSize = 30;
+let blockSize;
 let board = [];
 
 const EASY = 700;
 const MEDIUM = 500;
 const HARD = 300;
 
-let xC = 0, yC = 0;
-let startVisible = true;
+let scalingFactor = 20;
+
+let xC = yC = 0;
+let startVisible = placed = initial = true;
+
 let pieceQueue = [];
-let piece = null;
-let placed = true;
+let piece;
+
 let score = 0;
-let initial = true;
 
 let background = new Image();
 background.src = "./assets/bg.png";
@@ -222,9 +224,6 @@ window.onload = function() {
 
     window.addEventListener("keydown", keyInput);
     document.getElementById("start-button").addEventListener("click", start); 
-
-
-    
 }
 function keyInput(e) {
     switch(e.keyCode) {
@@ -237,7 +236,7 @@ function keyInput(e) {
             break;
         case 38:
             // up key pressed
-            update("rotate");
+            update("up");
             break;
         case 39:
             // right key pressed
@@ -256,7 +255,7 @@ function init() {
     //Dynamic canvas scaling
     c.height = document.documentElement.clientHeight * 0.8;
     c.width = c.height / 2;
-    blockSize = c.height / 20;
+    blockSize = c.height / scalingFactor;
     cc.imageSmoothingEnabled = false;
 
     //Canvas overlay scaling
@@ -279,25 +278,25 @@ function start() {
     //Transition start menu out
     document.getElementById("start-button").style.backgroundColor = "rgba(255, 255, 255, 0.9)";
     document.getElementById("start-button").style.boxShadow = "none";
-    document.getElementById("start-button").style.transform = "scale(0.95)";
-    document.getElementById("canvas").style.boxShadow = "0 0 50px rgba(0, 0, 0, 0.5)";
-    document.getElementById("start-menu").style.filter = "blur(50px)";
+    document.getElementById("canvas").style.boxShadow = "0 0 20px rgba(0, 0, 0, 0.5)";
+    document.getElementById("start-menu").style.filter = "blur(20px)";
     document.getElementById("start-menu").style.opacity = "0";
     //document.getElementById("start-menu").style.display = "none";
 
     //Start game timer
-    interval = setInterval(function(){update("down")}, HARD);
+    interval = setInterval(function(){update("down")}, EASY);
 }
 function update(dirParam) {
     cc.drawImage(background, 0, 0, c.width, c.height); 
     cc.fillStyle = "white";
+
     while(pieceQueue.length < 3) {
         pieceQueue.push(generatePiece());
     }
     
     if(placed) {
         piece = pieceQueue.shift();
-        xC = 0;
+        xC = Math.floor(board[0].length/2) - Math.floor(piece[0].length/2);
         yC = 0;
         placed = false;
         initial = true;
@@ -319,7 +318,8 @@ function update(dirParam) {
             }
         }    
     }
-    console.log("update");
+    
+    //console.log(dirParam);
     move(dirParam);
     draw();
 }
@@ -327,11 +327,12 @@ function draw() {
     
     for(let i=0; i<board.length; i++) {
         for(let j=0; j<board[i].length; j++) {
-            if(board[i][j] == 1 || board[i][j] == 2) {
+            if(board[i][j] != 0) {
                 roundRect(cc, j*blockSize + 2, i*blockSize + 2, blockSize - 4, blockSize - 4, 3, true);
             }
         }
     }
+    
 }
 function move(dirParam) {
     switch(dirParam) {
@@ -348,75 +349,82 @@ function move(dirParam) {
             if(initial) initial = false;
             else yC++;
             break;
-        case "rotate":
-            piece = rotate(piece);
-            break;
         default:
             alert("something dooted");
             return;
     }
 
-
-    let yCount = 0;
-    for(let i=0; i<piece.length; i++) {
-        let xCount = 0;
-        for(let j=0; j<piece[i].length; j++) {
-            if(piece[i].includes(1)) {
-                if(piece[i][j] == 1) {
-                    switch(dirParam) {
-                        case "left":
-                            if(xCount + xC < 0 || board[yCount + yC][xCount + xC] == 1) {
-                                xC++;
-                            }
-                            break;
-                        case "right":
-                            if(xCount + xC >= board[0].length || board[yCount + yC][xCount + xC] == 1) {
-                                xC--;
-                            }
-                            break;
-                        case "down":
-                            if(yCount + yC >= board.length || board[yCount + yC][xCount + xC] == 1) {
-                                yC--;
-                                placed = true;
-                            }
-                            break;
-                    }
-                    xCount++;
-                }
-            }
-        }
-        if(piece[i].includes(1)) yCount++;
+    let tempPiece = piece.slice(0);
+       //Trim rows
+    for(let i=0; i<tempPiece.length; i++) {
+    	if(!tempPiece[i].includes(1)) {
+    		tempPiece.splice(i, 1);
+    		i--;
+    	}
     }
-    //Clearing previous piece
+    //Trim cols
+    for(let j=0; j<tempPiece[0].length; j++) {
+    	let foundCol = false;
+    	for(let i=0; i<tempPiece.length; i++) {
+    		if(tempPiece[i][j] == 1) foundCol = true;
+    	}
+    	if(!foundCol) {
+    		for(let i=0; i<tempPiece.length; i++) {
+    			tempPiece[i].splice(j, 1);
+    		}
+    		j--;
+    	}
+    }
+
+    for(let i=0; i<tempPiece.length; i++) {
+    	for(let j=0; j<tempPiece[i].length; j++) {
+    		if(tempPiece[i][j] == 1) {
+    			switch(dirParam) {
+                    case "left":
+                        if(j + xC < 0 || board[i + yC][j + xC] == 1) {
+                            xC++;
+                        }
+                        break;
+                    case "right":
+                        if(j + xC >= board[0].length || board[i + yC][j + xC] == 1) {
+                            xC--;
+                        }
+                        break;
+                    case "down":
+                        if(i + yC >= board.length || board[i + yC][j + xC] == 1) {
+                            yC--;
+                            placed = true;
+                        }
+                        break;
+                }
+    		}
+    	}
+    }
+    
     if(!placed) {
+    	//Clearing previous piece
         for(let i=0; i<board.length; i++) {
             for(let j=0; j<board[i].length; j++) {
-                if(board[i][j] == 2) {
+                if(board[i][j] == -1) {
                     board[i][j] = 0;    
                     cc.clearRect(j, i, blockSize, blockSize);                
                 }
             }
         }
-
-        let yCount = 0;
-        for(let i=0; i<piece.length; i++) {
-            let xCount = 0;
-            for(let j=0; j<piece[i].length; j++) {
-                if(piece[i].includes(1)) {
-                    if(piece[i][j] == 1) {
-                        board[yCount + yC][xCount + xC] = 2;
-                        xCount++;
-                    }
-                }
-            }
-            if(piece[i].includes(1)) yCount++;
-        }
+        //Setting board with tempPiece
+	    for(let i=0; i<tempPiece.length; i++) {
+	    	for(let j=0; j<tempPiece[i].length; j++) {
+	    		if(tempPiece[i][j] == 1) {
+	    			board[i + yC][j + xC] = -1;
+	    		}
+	    	}
+	    }
     }
     else {
-        console.log("doot");
+    	//Set piece to board statically
         for(let i=0; i<board.length; i++) {
             for(let j=0; j<board[i].length; j++) {
-                if(board[i][j] == 2) {
+                if(board[i][j] == -1) {
                     board[i][j] = 1;              
                 }
             }
@@ -427,20 +435,32 @@ function move(dirParam) {
 
 
 //Rotate Logic
-function rotate(array){
+function rotate(matrix) {
+	/*
+	console.log("BEFORE");
+    for(let i=0; i<matrix.length; i++) {
+        for(let j=0; j<matrix[i].length; j++) {
+            console.log(i + ',' + j + " = " + matrix[i][j]);
+        }
+    }
+    */
+    let tempMatrix = [];
 
-    let newArray = [];
-    for(let i = 0; i < array.length; i++){
-        newArray.push([]);
-    };
-
-    for(let i = 0; i < array.length; i++){
-        for(let j = 0; j < array[i].length; j++){
-            newArray[j].push(array[i][j]);
-        };
-    };
-
-    return newArray;
+    for(let j=0; j<matrix[0].length; j++) {
+    	tempMatrix.push([]);
+    	for(let i=0; i<matrix.length; i++) {
+    		tempMatrix[j].push(matrix[matrix.length-1-i][j]);
+    	}
+    }
+    /*
+    console.log("AFTER");
+    for(let i=0; i<tempMatrix.length; i++) {
+        for(let j=0; j<tempMatrix[i].length; j++) {
+            console.log(i + ',' + j + " = " + tempMatrix[i][j]);
+        }
+    }
+	*/
+    return tempMatrix;
 }
 
 
