@@ -212,6 +212,7 @@ let pieceQueue = [];
 let piece = null;
 let placed = true;
 let score = 0;
+let initial = true;
 
 let background = new Image();
 background.src = "./assets/bg.png";
@@ -276,15 +277,16 @@ function start() {
     startVisible = false;
 
     //Transition start menu out
-    document.getElementById("start-button").style.background = "grey";
+    document.getElementById("start-button").style.backgroundColor = "rgba(255, 255, 255, 0.9)";
     document.getElementById("start-button").style.boxShadow = "none";
+    document.getElementById("start-button").style.transform = "scale(0.95)";
     document.getElementById("canvas").style.boxShadow = "0 0 50px rgba(0, 0, 0, 0.5)";
-    document.getElementById("start-menu").style.filter = "blur(20px)";
+    document.getElementById("start-menu").style.filter = "blur(50px)";
     document.getElementById("start-menu").style.opacity = "0";
     //document.getElementById("start-menu").style.display = "none";
 
     //Start game timer
-    interval = setInterval(function(){update("down")}, EASY);
+    interval = setInterval(function(){update("down")}, HARD);
 }
 function update(dirParam) {
     cc.drawImage(background, 0, 0, c.width, c.height); 
@@ -298,6 +300,7 @@ function update(dirParam) {
         xC = 0;
         yC = 0;
         placed = false;
+        initial = true;
 
         for(let i=0; i<board.length; i++) {
             let count = 0;
@@ -342,7 +345,8 @@ function move(dirParam) {
             piece = rotate(piece);
             break;
         case "down":
-            yC++;
+            if(initial) initial = false;
+            else yC++;
             break;
         case "rotate":
             piece = rotate(piece);
@@ -359,22 +363,23 @@ function move(dirParam) {
         for(let j=0; j<piece[i].length; j++) {
             if(piece[i].includes(1)) {
                 if(piece[i][j] == 1) {
-                    if(xCount + xC < 0 && dirParam == "left"){
-                        xC++;
-                        break;
-                    }
-                    if(xCount + xC >= board[0].length && dirParam == "right") {
-                        xC--;
-                        break;
-                    }
-                    if(yCount + yC >= board.length && dirParam == "down") {
-                        yC--;
-                        placed = true;
-                        break;
-                    }
-                    if(board[yCount + yC][xCount + xC] == 1) {
-                        placed = true;
-                        break;
+                    switch(dirParam) {
+                        case "left":
+                            if(xCount + xC < 0 || board[yCount + yC][xCount + xC] == 1) {
+                                xC++;
+                            }
+                            break;
+                        case "right":
+                            if(xCount + xC >= board[0].length || board[yCount + yC][xCount + xC] == 1) {
+                                xC--;
+                            }
+                            break;
+                        case "down":
+                            if(yCount + yC >= board.length || board[yCount + yC][xCount + xC] == 1) {
+                                yC--;
+                                placed = true;
+                            }
+                            break;
                     }
                     xCount++;
                 }
@@ -419,6 +424,26 @@ function move(dirParam) {
     }    
     
 }
+
+
+//Rotate Logic
+function rotate(array){
+
+    let newArray = [];
+    for(let i = 0; i < array.length; i++){
+        newArray.push([]);
+    };
+
+    for(let i = 0; i < array.length; i++){
+        for(let j = 0; j < array[i].length; j++){
+            newArray[j].push(array[i][j]);
+        };
+    };
+
+    return newArray;
+}
+
+
 function generatePiece() {
     polyminoList = [];
 
@@ -439,43 +464,6 @@ function generatePiece() {
     let polyminoPiece = polyminoCat[Math.floor(Math.random()*polyminoCat.length)];
     return polyminoPiece;
 }   
-
-//Rotate Logic
-function reverseRows(matrix) {
-  for (i in matrix) {
-    matrix[i] = matrix[i].reverse();
-  }
-}
-function transpose(matrix) {
-    var n = matrix[0].length;
-    var temp;
-
-    for (var i = 0, j = 0; i < n; i++) {
-        j = i;
-        while (j < n) {
-            if (i !== j) {
-                temp = matrix[i][j];
-                matrix[i][j] = matrix[j][i];
-                matrix[j][i] = temp;
-            }
-            j++;
-        }
-    }
-}
-function rotate(matrix) {
-    transpose(matrix);
-    reverseRows(matrix);
-    return matrix;
-}
-
-function reset(arr) {
-    for(let i=0; i<arr.length; i++) {
-        for(let j=0; j<arr[i].length; j++) {
-            arr[i][j] = 0;
-        }
-    }
-}
-
 function roundRect(ctx,x,y,width,height,radius,fill,stroke) {
     ctx.beginPath();
 
@@ -499,7 +487,6 @@ function roundRect(ctx,x,y,width,height,radius,fill,stroke) {
     ctx.stroke();
     }
 }
-
 
 
 
