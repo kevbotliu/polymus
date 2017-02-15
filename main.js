@@ -236,7 +236,7 @@ function keyInput(e) {
             break;
         case 38:
             // up key pressed
-            
+            update("rotate");
             break;
         case 39:
             // right key pressed
@@ -244,6 +244,7 @@ function keyInput(e) {
             break;
         case 40:
             // down key pressed
+            update("down");
             break;  
     }   
 }
@@ -294,6 +295,8 @@ function update(dirParam) {
     
     if(placed) {
         piece = pieceQueue.shift();
+        xC = 0;
+        yC = 0;
         placed = false;
 
         for(let i=0; i<board.length; i++) {
@@ -341,8 +344,11 @@ function move(dirParam) {
         case "down":
             yC++;
             break;
+        case "rotate":
+            piece = rotate(piece);
+            break;
         default:
-            alert("Something dooted")
+            alert("something dooted");
             return;
     }
 
@@ -353,12 +359,17 @@ function move(dirParam) {
         for(let j=0; j<piece[i].length; j++) {
             if(piece[i].includes(1)) {
                 if(piece[i][j] == 1) {
-                    if(board[yCount + yC][xCount + xC] == undefined && dirParam == "left"){
+                    if(xCount + xC < 0 && dirParam == "left"){
                         xC++;
                         break;
                     }
-                    if(board[yCount + yC][xCount + xC] == undefined && dirParam == "right") {
+                    if(xCount + xC >= board[0].length && dirParam == "right") {
                         xC--;
+                        break;
+                    }
+                    if(yCount + yC >= board.length && dirParam == "down") {
+                        yC--;
+                        placed = true;
                         break;
                     }
                     if(board[yCount + yC][xCount + xC] == 1) {
@@ -397,6 +408,7 @@ function move(dirParam) {
         }
     }
     else {
+        console.log("doot");
         for(let i=0; i<board.length; i++) {
             for(let j=0; j<board[i].length; j++) {
                 if(board[i][j] == 2) {
