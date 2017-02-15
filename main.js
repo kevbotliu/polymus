@@ -199,25 +199,19 @@ const hexominos =      [
                         ]
                     ];
 
-let boardWidth = 300;
-let boardHeight = 600;
 let blockSize = 30;
-let board = [], boardLayer = [];
+let board = [];
 
 const EASY = 700;
 const MEDIUM = 500;
 const HARD = 300;
 
+let xC = 0, yC = 0;
 let startVisible = true;
-let yC = 0, xC = 0;
 let pieceQueue = [];
 let piece = null;
 let placed = true;
 let score = 0;
-
-let leftBound, rightBound, topBound, bottomBound;
-
-let interval = null;
 
 let background = new Image();
 background.src = "./assets/bg.png";
@@ -225,89 +219,79 @@ background.src = "./assets/bg.png";
 window.onload = function() {
     init();
 
-    document.getElementById("start-button").addEventListener('click', function() {
-        startVisible = false;
-        document.getElementById("start-button").style.background = "grey";
-        document.getElementById("start-button").style.boxShadow = "none";
-        document.getElementById("canvas").style.boxShadow = "0 0 50px rgba(0, 0, 0, 0.5)";
-        document.getElementById("start-menu").style.filter = "blur(20px)";
-        document.getElementById("start-menu").style.opacity = "0";
-        //document.getElementById("start-menu").style.display = "none";
-        interval = setInterval(update, HARD);
-    }); 
+    window.addEventListener("keydown", keyInput);
+    document.getElementById("start-button").addEventListener("click", start); 
 
 
-    window.onkeydown = function(e) {
-        let code = e.keyCode ? e.keyCode : e.which;
-        if (code === 37) { //left key
-            if(drawBoardLayer(piece, xC - 1, yC)) {
-                xC--;
-                yC--;
-                update();
-            }
-        }
-        else if (code === 38) { //up key
-            piece = rotate(piece);
-            yC--;
-            update();
-        } 
-        else if (code === 39) { //right key
-            if(drawBoardLayer(piece, xC + 1, yC)) {
-                xC++;
-                yC--;
-                update();
-            }
-        } 
-        else if (code === 40) { //down key
-            yC = board.length - bottomBound - 1;
-            update();
-        }
-        else if (code == 27) {
-            //document.getElementById("start-menu").style.display = "flex";
-            document.getElementById("start-menu").style.opacity = "1";
-            document.getElementById("start-menu").style.filter = "blur(5px)";
-            clearInterval(interval);
-            startVisible = true;
-        }
-    };
     
 }
-
+function keyInput(e) {
+    switch(e.keyCode) {
+        case 27:
+            clearInterval(interval);
+            break;
+        case 37:
+            //left
+            update("left");
+            break;
+        case 38:
+            // up key pressed
+            
+            break;
+        case 39:
+            // right key pressed
+            update("right");
+            break;
+        case 40:
+            // down key pressed
+            break;  
+    }   
+}
 function init() {
     c = document.getElementById("canvas");
     cc = c.getContext("2d");
 
+    //Dynamic canvas scaling
+    c.height = document.documentElement.clientHeight * 0.8;
+    c.width = c.height / 2;
+    blockSize = c.height / 20;
+    cc.imageSmoothingEnabled = false;
 
-    boardHeight = document.documentElement.clientHeight * 0.8;
-    boardWidth = boardHeight / 2;
-    blockSize = boardHeight / 20;
-    c.height = boardHeight;
-    c.width = boardWidth;
+    //Canvas overlay scaling
+    document.getElementById("bg-image").style.height = (c.height + 40) + "px";
+    document.getElementById("bg-image").style.width = (c.width + 40) + "px";
+    document.getElementById("start-menu").style.width = c.width + "px";
+    document.getElementById("start-menu").style.height = c.height + "px";
 
-    document.getElementById("bg-image").style.height = (boardHeight + 40) + "px";
-    document.getElementById("bg-image").style.width = (boardWidth + 40) + "px";
-
-    document.getElementById("start-menu").style.width = boardWidth + "px";
-    document.getElementById("start-menu").style.height = boardHeight + "px";
-
-    for(let i=0; i<(boardHeight/blockSize); i++) {
+    //Populate board
+    for(let i=0; i<(c.height/blockSize); i++) {
         board[i] = [];
-        boardLayer[i] = [];
-        for(let j=0; j<(boardWidth/blockSize); j++) {
+        for(let j=0; j<(c.width/blockSize); j++) {
             board[i][j] = 0;
-            boardLayer[i][j] = 0;
         }
     }
-
-    cc.imageSmoothingEnabled = false;
 }
-function update() {
-    cc.drawImage(background, 0, 0, boardWidth, boardHeight); 
-    cc.fillStyle = "white";
+function start() {
+    startVisible = false;
 
+    //Transition start menu out
+    document.getElementById("start-button").style.background = "grey";
+    document.getElementById("start-button").style.boxShadow = "none";
+    document.getElementById("canvas").style.boxShadow = "0 0 50px rgba(0, 0, 0, 0.5)";
+    document.getElementById("start-menu").style.filter = "blur(20px)";
+    document.getElementById("start-menu").style.opacity = "0";
+    //document.getElementById("start-menu").style.display = "none";
+
+    //Start game timer
+    interval = setInterval(function(){update("down")}, EASY);
+}
+function update(dirParam) {
+    cc.drawImage(background, 0, 0, c.width, c.height); 
+    cc.fillStyle = "white";
     while(pieceQueue.length < 3) {
         pieceQueue.push(generatePiece());
     }
+    
     if(placed) {
         piece = pieceQueue.shift();
         placed = false;
@@ -318,100 +302,111 @@ function update() {
                 if(board[i][j] == 1) count++;
                 if(count == board[i].length) {
                     let list = [];
-                    for(let k=0; k<(boardWidth/blockSize); k++) {
+                    for(let k=0; k<(c.width/blockSize); k++) {
                         list.push(0);
                     }
                     board.splice(i, 1);
                     board.unshift(list);
                     score++;
+                    document.getElementById("score").innerHTML = score;
                 }
             }
         }    
     }
-
-    
-
-    
+    console.log("update");
+    move(dirParam);
     draw();
-    drawBoardLayer(piece, xC, yC);
-
-    reset(boardLayer);
-    yC++;
-
-
 }
 function draw() {
+    
     for(let i=0; i<board.length; i++) {
         for(let j=0; j<board[i].length; j++) {
-            if(board[i][j] == 1) {
-                roundRect(cc, j*blockSize + 2, i*blockSize + 2, blockSize - 4, blockSize - 4, 3, "white", true)
+            if(board[i][j] == 1 || board[i][j] == 2) {
+                roundRect(cc, j*blockSize + 2, i*blockSize + 2, blockSize - 4, blockSize - 4, 3, true);
             }
         }
     }
 }
-
-function drawBoardLayer(arr, x, y) {
-    reset(boardLayer);
-
-    //Collision handling
-    leftBound = null, rightBound = null, topBound = null, bottomBound = null;
-
-    for(let i=0; i<arr.length; i++) {
-        for(let j=0; j<arr[i].length; j++) {
-            if(arr[i][j] == 1) {
-                if(leftBound == null || j < leftBound) leftBound = j;
-                if(rightBound == null || j > rightBound) rightBound = j;
-                if(topBound == null || i < topBound) topBound = i;
-                if(bottomBound == null || i > bottomBound) bottomBound = i;
-            }
-        }
-    }
-    if((x + leftBound) < 0 || (x + rightBound) >= boardLayer[0].length) return false;
-
-
-    //Piece rendering
-    for(let i=0; i<arr.length; i++) {
-        for(let j=0; j<arr[i].length; j++) {
-            if(arr[i][j] == 1) {
-                if(board[i+y][j+x] == 1) {
-                    placed = true;
-                    drawBoardLayer(arr, x, y-1);
-                    xC = 0;
-                    yC = 0;
-                    return true;
-                }
-                else boardLayer[i+y][j+x] = 1;
-            }
-        }
+function move(dirParam) {
+    switch(dirParam) {
+        case "left":
+            xC--;
+            break;
+        case "right":
+            xC++;
+            break;
+        case "up": 
+            piece = rotate(piece);
+            break;
+        case "down":
+            yC++;
+            break;
+        default:
+            alert("Something dooted")
+            return;
     }
 
-    if(y + bottomBound == boardLayer.length - 1 || placed) {
-        for(let i=0; i<boardLayer.length; i++) {
-            for(let j=0; j<boardLayer[i].length; j++) {
-                if(boardLayer[i][j] == 1) {
-                    board[i][j] = boardLayer[i][j];
+
+    let yCount = 0;
+    for(let i=0; i<piece.length; i++) {
+        let xCount = 0;
+        for(let j=0; j<piece[i].length; j++) {
+            if(piece[i].includes(1)) {
+                if(piece[i][j] == 1) {
+                    if(board[yCount + yC][xCount + xC] == undefined && dirParam == "left"){
+                        xC++;
+                        break;
+                    }
+                    if(board[yCount + yC][xCount + xC] == undefined && dirParam == "right") {
+                        xC--;
+                        break;
+                    }
+                    if(board[yCount + yC][xCount + xC] == 1) {
+                        placed = true;
+                        break;
+                    }
+                    xCount++;
                 }
             }
         }
-        placed = true;
-        xC = 0;
-        yC = 0;
-        return true;
+        if(piece[i].includes(1)) yCount++;
     }
-
-    for(let i=0; i<boardLayer.length; i++) {
-        for(let j=0; j<boardLayer[i].length; j++) {
-            if(boardLayer[i][j] == 1) {
-                roundRect(cc, (j*blockSize + 2), (i*blockSize + 2), (blockSize - 4), (blockSize - 4), 3, "white", true);
-                //cc.fillRect((j*blockSize + 3), (i*blockSize + 3), (blockSize - 3), (blockSize - 3));
+    //Clearing previous piece
+    if(!placed) {
+        for(let i=0; i<board.length; i++) {
+            for(let j=0; j<board[i].length; j++) {
+                if(board[i][j] == 2) {
+                    board[i][j] = 0;    
+                    cc.clearRect(j, i, blockSize, blockSize);                
+                }
             }
         }
+
+        let yCount = 0;
+        for(let i=0; i<piece.length; i++) {
+            let xCount = 0;
+            for(let j=0; j<piece[i].length; j++) {
+                if(piece[i].includes(1)) {
+                    if(piece[i][j] == 1) {
+                        board[yCount + yC][xCount + xC] = 2;
+                        xCount++;
+                    }
+                }
+            }
+            if(piece[i].includes(1)) yCount++;
+        }
     }
+    else {
+        for(let i=0; i<board.length; i++) {
+            for(let j=0; j<board[i].length; j++) {
+                if(board[i][j] == 2) {
+                    board[i][j] = 1;              
+                }
+            }
+        }
+    }    
     
-    console.log(x + ", " + y);
-    return true;
 }
-
 function generatePiece() {
     polyminoList = [];
 
@@ -470,8 +465,6 @@ function reset(arr) {
 }
 
 function roundRect(ctx,x,y,width,height,radius,fill,stroke) {
-
-    ctx.imageSmoothingEnabled = false;
     ctx.beginPath();
 
     // draw top and top right corner
@@ -494,6 +487,8 @@ function roundRect(ctx,x,y,width,height,radius,fill,stroke) {
     ctx.stroke();
     }
 }
+
+
 
 
 window.onresize = function() {
